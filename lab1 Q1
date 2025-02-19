@@ -1,0 +1,30 @@
+using System;
+using System.Text.RegularExpressions;
+
+class Program
+{
+    static void Main()
+    {
+        // Define the regex pattern
+        string pattern = @"^(?=.*[A-Z])(?=.*[!@#$%^&*()\-_=+{};:,<.>]{2,})(?=.*[a-z]{4})(?=.*\d{2}).{1,12}$";
+
+        // Test passwords
+        string[] passwords = {
+            "Abc!@1234",       // Valid
+            "12Ab!@cd",         // Valid
+            "1234Ab!@",         // Invalid (more than 2 digits)
+            "Ab!@1234abcd",    // Invalid (more than 12 characters)
+            "AB!@1234",         // Invalid (no lowercase letters)
+            "ab!@1234",         // Invalid (no uppercase letter)
+            "Abc!1234",         // Invalid (only 1 special character)
+            "Abc!@12"          // Invalid (less than 4 lowercase letters)
+        };
+
+        // Check each password
+        foreach (string password in passwords)
+        {
+            bool isValid = Regex.IsMatch(password, pattern);
+            Console.WriteLine($"Password: {password} -> Valid: {isValid}");
+        }
+    }
+}

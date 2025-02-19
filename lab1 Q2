@@ -1,0 +1,78 @@
+using System;
+using System.Text;
+using System.Text.RegularExpressions;
+
+class Program
+{
+    private static Random random = new Random();
+
+    static void Main()
+    {
+        // Inputs
+        string firstName = "John";
+        string lastName = "Doe";
+        string regNo = "123"; // Must be exactly 3 digits
+        string favoriteMovie = "Inception";
+        string favoriteFood = "Pizza";
+
+        // Generate password
+        string password = GeneratePassword(firstName, lastName, regNo, favoriteMovie, favoriteFood);
+        Console.WriteLine("Generated Password: " + password);
+    }
+
+    static string GeneratePassword(string firstName, string lastName, string regNo, string favoriteMovie, string favoriteFood)
+    {
+        // Validation checks
+        if (!Regex.IsMatch(regNo, @"^\d{3}$"))
+            throw new ArgumentException("Registration number must be exactly 3 digits.");
+        if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
+            throw new ArgumentException("First name and last name cannot be empty.");
+        if (string.IsNullOrWhiteSpace(favoriteMovie) || string.IsNullOrWhiteSpace(favoriteFood))
+            throw new ArgumentException("Favorite movie and food cannot be empty.");
+
+        StringBuilder password = new StringBuilder();
+
+        // 1. Add 2 random digits from the registration number
+        password.Append(regNo[random.Next(regNo.Length)]);
+        password.Append(regNo[random.Next(regNo.Length)]);
+
+        // 2. Add 1 uppercase letter from the first name
+        password.Append(char.ToUpper(firstName[random.Next(firstName.Length)]));
+
+        // 3. Add 1 lowercase letter from the last name
+        password.Append(char.ToLower(lastName[random.Next(lastName.Length)]));
+
+        // 4. Add 2 random characters from the favorite movie
+        password.Append(favoriteMovie[random.Next(favoriteMovie.Length)]);
+        password.Append(favoriteMovie[random.Next(favoriteMovie.Length)]);
+
+        // 5. Add 2 random characters from the favorite food
+        password.Append(favoriteFood[random.Next(favoriteFood.Length)]);
+        password.Append(favoriteFood[random.Next(favoriteFood.Length)]);
+
+        // 6. Add 1 special character
+        string specialChars = "!@#$%^&*()";
+        password.Append(specialChars[random.Next(specialChars.Length)]);
+
+        // 7. Adjust length to be between 8 and 12 characters
+        while (password.Length < 8)
+            password.Append((char)random.Next('a', 'z' + 1));
+        
+        if (password.Length > 12)
+            password.Length = 12;
+
+        // 8. Shuffle password for randomness
+        return Shuffle(password.ToString());
+    }
+
+    static string Shuffle(string input)
+    {
+        char[] chars = input.ToCharArray();
+        for (int i = chars.Length - 1; i > 0; i--)
+        {
+            int j = random.Next(i + 1);
+            (chars[i], chars[j]) = (chars[j], chars[i]); // Swap elements
+        }
+        return new string(chars);
+    }
+}
